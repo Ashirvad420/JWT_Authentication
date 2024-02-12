@@ -8,6 +8,7 @@ import com.NewProject.NewPage.service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,15 +63,14 @@ public class PostServiceImpl implements PostService {
         return dto;
     }
 
-
     // this is using for GetAll Post
-    @Override
-    public List<PostDto> getAllPost() {
-
-        List<Post> posts = postRepository.findAll();
-        List<PostDto> dtos = posts.stream().map(n-> mapToDto(n)).collect(Collectors.toList());
-        return dtos;
-    }
+//    @Override
+//    public List<PostDto> getAllPost() {
+//
+//        List<Post> posts = postRepository.findAll();
+//        List<PostDto> dtos = posts.stream().map(n-> mapToDto(n)).collect(Collectors.toList());
+//        return dtos;
+//    }
 //
 //    PostDto mapToDto(Post post)  // return PostDto
 //    {
@@ -93,11 +93,12 @@ public class PostServiceImpl implements PostService {
 
 
     // this is using for pagination
-    // http://localhost:8080/api/posts?pageNo=2&pageSize=5
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+    public List<PostDto> getAllPost(int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        Pageable pageable = PageRequest.of(pageNo,pageSize);
+//      Pageable pageable = PageRequest.of(pageNo,pageSize);
+       Sort sort = (sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()))?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo,pageSize,sort);
         Page<Post> postPage = postRepository.findAll(pageable);
         List<Post> posts = postPage.getContent(); // convert pagePost to ListPost then we use getContent
 
@@ -124,6 +125,14 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 }
+
+
+
+
+
+
+
+
 // crud Repository not help you to do pagination
 // pagination concept in crud repository is not there
 // if you want to apply pagination and sorting then use JPA Repository

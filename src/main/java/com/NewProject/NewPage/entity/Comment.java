@@ -1,18 +1,16 @@
 package com.NewProject.NewPage.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Entity
 @Table(name = "comments")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -21,7 +19,8 @@ public class Comment {
 
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    // Many comments can belong to one post
+    @ManyToOne
+    @JoinColumn(name = "post_id")
     private Post post;
 }

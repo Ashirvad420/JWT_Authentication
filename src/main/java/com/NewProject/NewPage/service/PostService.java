@@ -14,8 +14,10 @@ public interface PostService {
     // this is using for GetAll Id
     PostDto getPostById(long id);
 
-    // this is using for GetAll Post
-    List<PostDto> getAllPost();
+    // this is for pagination
+    List<PostDto> getAllPost(int pageNo, int pageSize, String sortBy, String sortDir);
 
-    List<PostDto> getAllPosts(int pageNo, int pageSize);
+    // this is using for GetAll Post
+//    List<PostDto> getAllPost();
+
 }

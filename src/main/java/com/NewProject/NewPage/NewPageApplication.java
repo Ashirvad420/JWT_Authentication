@@ -9,5 +9,4 @@ public class NewPageApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NewPageApplication.class, args);
 	}
-
 }
