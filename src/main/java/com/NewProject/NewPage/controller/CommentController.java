@@ -27,6 +27,33 @@ public class CommentController {
        CommentDto dto = commentService.createComment(commentDto,postId);
        return  new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+
+    //DeleteCommnet
+
+    // http://localhost:8080/api/comments/2
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteComment(@PathVariable long id)
+    {
+        commentService.deleteComment(id);
+        return new ResponseEntity<>("Comment is deleted!",HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable long id,@RequestBody CommentDto commentDto)
+    {
+        CommentDto dto = commentService.updateComment(id, commentDto);
+        return new ResponseEntity<>(dto,HttpStatus.OK);
+    }
 }
 
-// Date 2024-01-24 to 2024-01-24 to 2024-01-29
+
+
+
+
+
+// Date 2024-01-24 to 2024-01-24 to 2024-01-29 to 2024-01-30
+
+/*
+the question mark (?) is used to indicate the start of the query parameters.
+Query parameters are used to pass data to the server as part of an HTTP request.
+ */

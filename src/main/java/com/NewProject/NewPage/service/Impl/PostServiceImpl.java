@@ -5,6 +5,7 @@ import com.NewProject.NewPage.exception.ResouceNotFoundException;
 import com.NewProject.NewPage.payload.PostDto;
 import com.NewProject.NewPage.repository.PostRepository;
 import com.NewProject.NewPage.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,12 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    private ModelMapper modelMapper;  // this is third party library
+
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
+
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -108,20 +113,22 @@ public class PostServiceImpl implements PostService {
 
     PostDto mapToDto(Post post)  // return PostDto
     {
-        PostDto dto = new PostDto(); // Return PostDto
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setDescription(post.getDescription());
-        dto.setContent(post.getContent());
+        PostDto dto = modelMapper.map(post,PostDto.class);  // this is using model mapper in entity class
+//        PostDto dto = new PostDto(); // Return PostDto
+//        dto.setId(post.getId());
+//        dto.setTitle(post.getTitle());
+//        dto.setDescription(post.getDescription());
+//        dto.setContent(post.getContent());
         return  dto;
     }
 
     Post mapToEntity(PostDto postDto)  // return PostDto
     {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+        Post post = modelMapper.map(postDto,Post.class);  // this is using model mapper in postDto class
+//        Post post = new Post();
+//        post.setTitle(postDto.getTitle());
+//        post.setDescription(postDto.getDescription());
+//        post.setContent(postDto.getContent());
         return post;
     }
 }
@@ -136,3 +143,4 @@ public class PostServiceImpl implements PostService {
 // crud Repository not help you to do pagination
 // pagination concept in crud repository is not there
 // if you want to apply pagination and sorting then use JPA Repository
+// java library they help us to copy the code one library to another library

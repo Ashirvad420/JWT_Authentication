@@ -8,6 +8,7 @@ import com.NewProject.NewPage.payload.CommentDto;
 import com.NewProject.NewPage.repository.CommentRepository;
 import com.NewProject.NewPage.repository.PostRepository;
 import com.NewProject.NewPage.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +25,7 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    // this is for CreateComment
     @Override
     public CommentDto createComment(CommentDto commentDto, long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
@@ -44,6 +46,21 @@ public class CommentServiceImpl implements CommentService {
 
 
         return dto;
+    }
+
+    // this is for delete Comment
+    @Override
+    public void deleteComment(long id) {
+        commentRepository.deleteById(id);
+    }
+
+    // this is for update Comment
+    @Override
+    public CommentDto updateComment(long id, CommentDto commentDto) {
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                ()-> new ResouceNotFoundException("Comment not found id: "+id)
+        );
+        return commentDto;
     }
 
 }
