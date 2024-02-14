@@ -18,10 +18,12 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
 
+    private ModelMapper modelMapper;
 
-    public CommentServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
+    public CommentServiceImpl(PostRepository postRepository, CommentRepository commentRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.modelMapper = modelMapper;
 
     }
 
@@ -43,8 +45,6 @@ public class CommentServiceImpl implements CommentService {
         dto.setId(savedComment.getId());
         dto.setEmail(savedComment.getEmail());
         dto.setText(savedComment.getText());
-
-
         return dto;
     }
 
@@ -56,11 +56,31 @@ public class CommentServiceImpl implements CommentService {
 
     // this is for update Comment
     @Override
-    public CommentDto updateComment(long id, CommentDto commentDto) {
-        Comment comment = commentRepository.findById(id).orElseThrow(
-                ()-> new ResouceNotFoundException("Comment not found id: "+id)
+    public CommentDto updateComment(long id, CommentDto commentDto, long postId) {
+       Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResouceNotFoundException("Post  not found id: " + id) // this for postId
         );
-        return commentDto;
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new ResouceNotFoundException("Comment not found id: " + id)
+        );
+        // Return Back the Comment
+
+        Comment c = mapToEntity(commentDto);
+        c.setId(comment.getId());
+        c.setPost(post);
+        Comment savedComment = commentRepository.save(c);
+        return mapToDto(savedComment);
+    }
+
+    // create method for modelMapper
+    CommentDto mapToDto(Comment comment) {
+        CommentDto dto = modelMapper.map(comment, CommentDto.class);
+        return dto;
+    }
+
+    Comment mapToEntity(CommentDto commentDto) {
+        Comment comment = modelMapper.map(commentDto, Comment.class);
+        return comment;
     }
 
 }
