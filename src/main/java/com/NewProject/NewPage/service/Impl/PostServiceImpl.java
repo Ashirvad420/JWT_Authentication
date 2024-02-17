@@ -1,7 +1,7 @@
 package com.NewProject.NewPage.service.Impl;
 
 import com.NewProject.NewPage.entity.Post;
-import com.NewProject.NewPage.exception.ResouceNotFoundException;
+import com.NewProject.NewPage.exception.ResourceNotFoundException;
 import com.NewProject.NewPage.payload.PostDto;
 import com.NewProject.NewPage.repository.PostRepository;
 import com.NewProject.NewPage.service.PostService;
@@ -20,10 +20,9 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
 
-    private ModelMapper modelMapper;  // this is third party library
+    private ModelMapper modelMapper;
 
-    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
-
+    public PostServiceImpl(PostRepository postRepository,ModelMapper modelMapper) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
     }
@@ -31,105 +30,74 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
 
-
+        Post post = mapToEntity(postDto);
 
 //        Post post = new Post();
+//
 //        post.setTitle(postDto.getTitle());
 //        post.setDescription(postDto.getDescription());
 //        post.setContent(postDto.getContent());
 
-        Post post = mapToEntity(postDto);
+        Post savedPost = postRepository.save(post);
 
-        Post savedPost= postRepository.save(post);
-
-//        PostDto dto = new PostDto(); // Return PostDto
-//        dto.setTitle(savedPost.getTitle());
-//        dto.setDescription(savedPost.getDescription());
-//        dto.setContent(savedPost.getContent());
 
         PostDto dto = mapToDto(savedPost);
 
+
+//       dto.setTitle(savedPost.getTitle());
+//       dto.setDescription(savedPost.getDescription());
+//       dto.setContent(savedPost.getContent());
+
         return dto;
     }
+
 
     @Override
     public PostDto getPostById(long id) {
-
-        Post post = postRepository.findById(id).orElseThrow( //supplier
-                ()->new ResouceNotFoundException("Post Not found with id:-"+id)
+        Post post = postRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Post not found with id:"+id)
         );
-        // Convert Post Object to dto
+        PostDto dto = mapToDto(post);
 
-        PostDto dto = new PostDto(); // Return PostDto
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setDescription(post.getDescription());
-        dto.setContent(post.getContent());
         return dto;
     }
 
-    // this is using for GetAll Post
-//    @Override
-//    public List<PostDto> getAllPost() {
-//
-//        List<Post> posts = postRepository.findAll();
-//        List<PostDto> dtos = posts.stream().map(n-> mapToDto(n)).collect(Collectors.toList());
-//        return dtos;
-//    }
-//
-//    PostDto mapToDto(Post post)  // return PostDto
-//    {
-//        PostDto dto = new PostDto(); // Return PostDto
-//        dto.setId(post.getId());
-//        dto.setTitle(post.getTitle());
-//        dto.setDescription(post.getDescription());
-//        dto.setContent(post.getContent());
-//        return  dto;
-//    }
-//
-//    Post mapToEntity(PostDto postDto)  // return PostDto
-//    {
-//        Post post = new Post();
-//        post.setTitle(postDto.getTitle());
-//        post.setDescription(postDto.getDescription());
-//        post.setContent(postDto.getContent());
-//        return post;
-//    }
-
-
-    // this is using for pagination
     @Override
     public List<PostDto> getAllPost(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = (sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo,pageSize, sort);
+        Page<Post> pagePost = postRepository.findAll(pageable);
 
-//      Pageable pageable = PageRequest.of(pageNo,pageSize);
-       Sort sort = (sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()))?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(pageNo,pageSize,sort);
-        Page<Post> postPage = postRepository.findAll(pageable);
-        List<Post> posts = postPage.getContent(); // convert pagePost to ListPost then we use getContent
+        List<Post> content = pagePost.getContent();
 
-        List<PostDto> dtos = posts.stream().map(news -> mapToDto(news)).collect(Collectors.toList());
-        return dtos;
+        List<PostDto> collect = content.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
+        return collect;
     }
 
-    PostDto mapToDto(Post post)  // return PostDto
-    {
-        PostDto dto = modelMapper.map(post,PostDto.class);  // this is using model mapper in entity class
-//        PostDto dto = new PostDto(); // Return PostDto
-//        dto.setId(post.getId());
+    PostDto mapToDto(Post post) {
+
+        PostDto dto = modelMapper.map(post, PostDto.class);
+
+//        PostDto dto = new PostDto();
+//
 //        dto.setTitle(post.getTitle());
 //        dto.setDescription(post.getDescription());
 //        dto.setContent(post.getContent());
-        return  dto;
+        return dto;
+
     }
 
-    Post mapToEntity(PostDto postDto)  // return PostDto
-    {
-        Post post = modelMapper.map(postDto,Post.class);  // this is using model mapper in postDto class
+    Post mapToEntity(PostDto postDto){
+
+        Post post = modelMapper.map(postDto, Post.class);
+
 //        Post post = new Post();
+//
 //        post.setTitle(postDto.getTitle());
 //        post.setDescription(postDto.getDescription());
 //        post.setContent(postDto.getContent());
         return post;
+
     }
 }
 

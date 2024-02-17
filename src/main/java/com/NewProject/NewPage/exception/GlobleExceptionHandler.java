@@ -13,10 +13,10 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobleExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ResouceNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDetails> handerResponseEntityException
             (
-                    ResouceNotFoundException e,
+                    ResourceNotFoundException e,
                     WebRequest webRequest
             )
     {

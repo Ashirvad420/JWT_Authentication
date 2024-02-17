@@ -1,9 +1,11 @@
 package com.NewProject.NewPage.controller;
 
+
 import com.NewProject.NewPage.payload.PostDto;
 import com.NewProject.NewPage.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class PostController {
     }
 
     // this is for get data in database
+    @PreAuthorize("hasRole('ADMIN')") // only can admin can create a post
     @PostMapping
     public ResponseEntity<PostDto> createDto(@RequestBody PostDto postDto)
     {
@@ -31,7 +34,9 @@ public class PostController {
     @GetMapping("/all")
     public  ResponseEntity<PostDto>  getPostById(@RequestParam long id)
     {
-        PostDto dto = postService.getPostById(id);
+//        PostDto dto = postService.getPostById(id);
+//        PostDto dto = postService.getPostByID(id);
+        PostDto dto =  postService.getPostById(id);
         return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
