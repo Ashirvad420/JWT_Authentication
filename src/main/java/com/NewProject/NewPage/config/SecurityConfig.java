@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/api/**").permitAll()// after this giving getmapping url is work
+                .antMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
