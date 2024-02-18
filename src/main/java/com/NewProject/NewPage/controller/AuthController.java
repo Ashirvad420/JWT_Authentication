@@ -1,7 +1,9 @@
 package com.NewProject.NewPage.controller;
 
+import com.NewProject.NewPage.entity.Role;
 import com.NewProject.NewPage.entity.User;
 import com.NewProject.NewPage.payload.SignUpDto;
+import com.NewProject.NewPage.repository.RoleRepository;
 import com.NewProject.NewPage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -21,6 +26,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto) {
@@ -44,9 +52,18 @@ public class AuthController {
         user.setEmail(signUpDto.getEmail());
         user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 
+        // Role Repository layer in singup ManyToMany
+//        Role roles = roleRepository.findByName("ROLE_ADMIN").get(); // it is use role object for role table
+        Role roles = roleRepository.findByName(signUpDto.getRoleType()).get();
+        Set<Role> convertRoleToSet = new HashSet<>();
+        convertRoleToSet.add(roles);
+        user.setRoles(convertRoleToSet);
+
         userRepository.save(user);
+
+
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
     }
 }
 
-// Date :- 2024-02-05 SingUp
+// Date :- 2024-02-05 to 2024-02-07 SingUp
