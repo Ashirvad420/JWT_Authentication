@@ -1,8 +1,9 @@
 package com.NewProject.NewPage.service;
 
 import com.NewProject.NewPage.payload.CommentDto;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public interface CommentService {
 
 
